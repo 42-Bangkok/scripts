@@ -1,35 +1,49 @@
-from constants.users import TUTORS
+import os
 from intra.intra import API
 from services.console import console
+from services.inputs import get_logins
 from rich.markdown import Markdown
 from rich.progress import track
 from rich.prompt import Confirm
 import uuid
 
+
 def main():
-    description = Markdown("""# Tutor experience reset script
+    description = Markdown(
+        """# Tutor experience reset script
     This script resets all tutor accounts experiences.
+    - read logins from app/inputs/tutor_experience_reset.csv
     - reset eval points to 5
     - remove all experiencables
     - change email to xbangkok+d5e7@42bangkok.com
     \n
-    It looks throught a to zbangkok, if such user exists, it will reset its status.
-    """)
-
+    """
+    )
     console.print(description)
+    if not os.path.exists("inputs/tutor_experience_reset.csv"):
+        console.print(
+            "[bold red]app/inputs/tutor_experience_reset.csv not found[/bold red]"
+        )
+        exit()
+    logins = get_logins("inputs/tutor_experience_reset.csv")
+    console.print(f"The script will alter {len(logins)} users: {logins}")
+    console.print("Make sure the input is correct.")
     choice = Confirm.ask("Continue?")
     if not choice:
         exit()
 
     api = API()
     tutors = []
-    for tutor in track(TUTORS, description="Getting tutors"):
+    for tutor in track(
+        get_users("app/inputs/tutor_experience_reset.csv"),
+        description="Getting tutors",
+    ):
         try:
             u = api.user(tutor)
             tutors.append(u)
         except:
-            console.log(f'\n{tutor} not found')
-    console.log(f'{len(tutors)} tutors found')
+            console.log(f"\n{tutor} not found")
+    console.log(f"{len(tutors)} tutors found")
 
     # Change email
     console.log("changing email")
@@ -56,18 +70,16 @@ def main():
 
     # Verify
     console.log("verifying")
-    status = {
-        "success": [],
-        "failed": []
-    }
+    status = {"success": [], "failed": []}
     for tutor in track(tutors, description="Verifying"):
         experiences = tutor.get_experiences()
         if len(experiences) != 0 or tutor.correction_point != 5:
-            status['failed'].append(tutor.login)
+            status["failed"].append(tutor.login)
         else:
-            status['success'].append(tutor.login)
+            status["success"].append(tutor.login)
     console.log(status)
     console.log("done")
+
 
 if __name__ == "__main__":
     main()
