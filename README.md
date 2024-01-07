@@ -7,7 +7,8 @@ Collection of scripts for various tasks
 ```
 cp .env.example .env
 ```
-Obtain FT_UID, FT_SECRET and place in .env, make sure they have sufficient permissions
+- Obtain FT_UID, FT_SECRET and place in .env, make sure they have sufficient permissions
+- Place a csv file containing logins in app/inputs with the same name as the script
 ```
 make
 ```

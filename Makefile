@@ -13,3 +13,6 @@ req:
 
 clean:
 	-docker rmi $(IMAGE_NAME):latest
+
+test:
+	pytest -n auto
