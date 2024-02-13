@@ -35,7 +35,7 @@ def main():
     api = API()
     tutors = []
     for tutor in track(
-        get_users("app/inputs/tutor_experience_reset.csv"),
+        logins,
         description="Getting tutors",
     ):
         try:
