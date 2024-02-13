@@ -26,7 +26,7 @@ def main():
         )
         exit()
     logins = get_logins("inputs/tutor_experience_reset.csv")
-    console.print(f"The script will alter {len(logins)} users: {logins}")
+    console.print(f"The script will alter {len(logins)} users: {', '.join(logins)}")
     console.print("Make sure the input is correct.")
     choice = Confirm.ask("Continue?")
     if not choice:
